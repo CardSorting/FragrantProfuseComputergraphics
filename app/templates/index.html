@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Personality Chatbot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/output.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Include any additional meta tags or scripts here -->
+    <style>
+        /* Custom Animations */
+        @keyframes fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .animate-fade-in {
+            animation: fade-in 1s ease-in-out;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* FAB Styling */
+        .fab {
+            transition: transform 0.2s;
+        }
+        .fab:hover {
+            transform: scale(1.1);
+        }
+
+        /* Modal Scrollbar Styling */
+        #personality-modal::-webkit-scrollbar {
+            width: 8px;
+        }
+        #personality-modal::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-white dark:bg-gray-800 text-gray-800 dark:text-white sticky top-0 z-50 transition-all duration-300 shadow-md">
+        <div class="h-1 bg-primary-600" id="scroll-progress"></div>
+        <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-primary-600 dark:text-primary-400">Multi-Personality Chatbot</a>
+            <div class="flex items-center">
+                <!-- Dark Mode Toggle -->
+                <button id="dark-mode-toggle" class="mr-4 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors duration-300" aria-label="Toggle dark mode">
+                    <svg id="light-mode-icon" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/>
+                    </svg>
+                    <svg id="dark-mode-icon" class="w-6 h-6 hidden" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+                    </svg>
+                </button>
+                <!-- Mobile Menu Toggle -->
+                <button id="mobile-menu-toggle" class="block lg:hidden focus:outline-none" aria-label="Toggle menu">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+                <!-- Desktop Menu -->
+                <div class="hidden lg:flex space-x-4">
+                    <a href="#features" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-300">Features</a>
+                    <a href="#personalities" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-300">Personalities</a>
+                    <a href="#testimonials" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-300">Testimonials</a>
+                    <a href="#contact" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-300">Contact</a>
+                </div>
+            </div>
+        </nav>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="lg:hidden hidden bg-white dark:bg-gray-800">
+            <a href="#features" class="block py-2 px-4 text-sm hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-300">Features</a>
+            <a href="#personalities" class="block py-2 px-4 text-sm hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-300">Personalities</a>
+            <a href="#testimonials" class="block py-2 px-4 text-sm hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-300">Testimonials</a>
+            <a href="#contact" class="block py-2 px-4 text-sm hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-300">Contact</a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 py-8">
+        <!-- Hero Section -->
+        <section class="hero mb-16">
+            <div class="flex flex-col lg:flex-row items-center">
+                <div class="lg:w-1/2 mb-8 lg:mb-0">
+                    <h1 class="text-4xl md:text-5xl font-bold mb-4 text-gray-900 dark:text-white animate-fade-in">Experience AI-Powered Conversations</h1>
+                    <p class="text-xl mb-6 text-gray-600 dark:text-gray-300 animate-slide-in">Engage with unique AI personalities and explore diverse perspectives.</p>
+                    <a href="#personalities" class="btn-primary inline-block animate-pulse-slow">Start Chatting</a>
+                </div>
+                <div class="lg:w-1/2 relative">
+                    <img src="{{ url_for('static', filename='images/hero-illustration.svg') }}" alt="AI Chatbot Illustration" class="w-full h-auto animate-float">
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="mb-16">
+            <h2 class="text-3xl font-bold mb-8 text-center text-gray-900 dark:text-white">Key Features</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="card group transform transition duration-500 hover:scale-105">
+                    <div class="relative overflow-hidden p-6 h-full">
+                        <div class="absolute inset-0 bg-primary-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+                        <div class="relative z-10">
+                            <h3 class="text-xl font-semibold mb-4 group-hover:text-white transition-colors duration-300">Multiple Personalities</h3>
+                            <p class="text-gray-600 dark:text-gray-300 group-hover:text-gray-100 transition-colors duration-300">Choose from a variety of unique AI personalities to chat with.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card group transform transition duration-500 hover:scale-105">
+                    <div class="relative overflow-hidden p-6 h-full">
+                        <div class="absolute inset-0 bg-primary-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+                        <div class="relative z-10">
+                            <h3 class="text-xl font-semibold mb-4 group-hover:text-white transition-colors duration-300">Natural Conversations</h3>
+                            <p class="text-gray-600 dark:text-gray-300 group-hover:text-gray-100 transition-colors duration-300">Experience fluid and context-aware interactions with our advanced AI.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card group transform transition duration-500 hover:scale-105">
+                    <div class="relative overflow-hidden p-6 h-full">
+                        <div class="absolute inset-0 bg-primary-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+                        <div class="relative z-10">
+                            <h3 class="text-xl font-semibold mb-4 group-hover:text-white transition-colors duration-300">Customizable Experience</h3>
+                            <p class="text-gray-600 dark:text-gray-300 group-hover:text-gray-100 transition-colors duration-300">Tailor your chat experience with personalized settings and preferences.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Personalities Section -->
+        <section id="personalities" class="mb-16">
+            <h2 class="text-3xl font-bold mb-8 text-center text-gray-900 dark:text-white">Meet Our AI Personalities</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="personalities-grid">
+                <!-- Personality Cards -->
+                <!-- Example Personality Card -->
+                <div class="bg-evelyn-gradient p-6 rounded-lg shadow-xl-lg transform transition duration-500 hover:scale-105 cursor-pointer group relative" data-personality-id="1">
+                    <img src="{{ url_for('static', filename='images/evelyn.png') }}" alt="Evelyn" class="w-24 h-24 rounded-full mx-auto mb-4 animate-float">
+                    <h3 class="text-xl font-semibold text-center text-white">Evelyn</h3>
+                    <p class="text-white text-center mt-2">A friendly and knowledgeable assistant ready to help you with anything.</p>
+                    <!-- Badge -->
+                    <span class="absolute top-4 right-4 bg-blue-600 text-white text-xs px-2 py-1 rounded-full">Support</span>
+                </div>
+                <div class="bg-max-gradient p-6 rounded-lg shadow-xl-lg transform transition duration-500 hover:scale-105 cursor-pointer group relative" data-personality-id="2">
+                    <img src="{{ url_for('static', filename='images/max.png') }}" alt="Max" class="w-24 h-24 rounded-full mx-auto mb-4 animate-float">
+                    <h3 class="text-xl font-semibold text-center text-white">Max</h3>
+                    <p class="text-white text-center mt-2">A tech-savvy and analytical thinker who loves solving complex problems.</p>
+                    <!-- Badge -->
+                    <span class="absolute top-4 right-4 bg-green-600 text-white text-xs px-2 py-1 rounded-full">Analyst</span>
+                </div>
+                <div class="bg-luna-gradient p-6 rounded-lg shadow-xl-lg transform transition duration-500 hover:scale-105 cursor-pointer group relative" data-personality-id="3">
+                    <img src="{{ url_for('static', filename='images/luna.png') }}" alt="Luna" class="w-24 h-24 rounded-full mx-auto mb-4 animate-float">
+                    <h3 class="text-xl font-semibold text-center text-white">Luna</h3>
+                    <p class="text-white text-center mt-2">A creative and artistic companion who inspires and motivates.</p>
+                    <!-- Badge -->
+                    <span class="absolute top-4 right-4 bg-pink-600 text-white text-xs px-2 py-1 rounded-full">Creative</span>
+                </div>
+                <div class="bg-oscar-gradient p-6 rounded-lg shadow-xl-lg transform transition duration-500 hover:scale-105 cursor-pointer group relative" data-personality-id="4">
+                    <img src="{{ url_for('static', filename='images/oscar.png') }}" alt="Oscar" class="w-24 h-24 rounded-full mx-auto mb-4 animate-float">
+                    <h3 class="text-xl font-semibold text-center text-white">Oscar</h3>
+                    <p class="text-white text-center mt-2">A humorous and witty conversationalist who keeps the chat lively.</p>
+                    <!-- Badge -->
+                    <span class="absolute top-4 right-4 bg-yellow-600 text-white text-xs px-2 py-1 rounded-full">Humor</span>
+                </div>
+                <!-- Add more personalities as needed -->
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section id="testimonials" class="mb-16">
+            <h2 class="text-3xl font-bold mb-8 text-center text-gray-900 dark:text-white">What Our Users Say</h2>
+            <div class="relative max-w-4xl mx-auto">
+                <div class="overflow-hidden">
+                    <div class="flex transition-transform duration-500 ease-in-out" id="testimonial-slider">
+                        <div class="w-full flex-shrink-0 px-4">
+                            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                                <p class="text-gray-600 dark:text-gray-300 mb-4">"This chatbot is amazing! I love how each personality has its own unique quirks and knowledge base."</p>
+                                <p class="font-semibold">- Sarah J.</p>
+                            </div>
+                        </div>
+                        <div class="w-full flex-shrink-0 px-4">
+                            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                                <p class="text-gray-600 dark:text-gray-300 mb-4">"I've learned so much from conversations with the different AI personalities. It's both fun and educational!"</p>
+                                <p class="font-semibold">- Mike R.</p>
+                            </div>
+                        </div>
+                        <div class="w-full flex-shrink-0 px-4">
+                            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                                <p class="text-gray-600 dark:text-gray-300 mb-4">"The variety of personalities available makes this chatbot stand out. There's always something new to explore!"</p>
+                                <p class="font-semibold">- Emily T.</p>
+                            </div>
+                        </div>
+                        <!-- Add more testimonials as needed -->
+                    </div>
+                </div>
+                <!-- Navigation Buttons -->
+                <button id="testimonial-prev" class="absolute top-1/2 left-0 transform -translate-y-1/2 bg-white dark:bg-gray-800 rounded-full p-2 shadow-md focus:outline-none focus:ring-2 focus:ring-primary-500" aria-label="Previous testimonial">
+                    <svg class="w-6 h-6 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                </button>
+                <button id="testimonial-next" class="absolute top-1/2 right-0 transform -translate-y-1/2 bg-white dark:bg-gray-800 rounded-full p-2 shadow-md focus:outline-none focus:ring-2 focus:ring-primary-500" aria-label="Next testimonial">
+                    <svg class="w-6 h-6 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </button>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="mb-16">
+            <h2 class="text-3xl font-bold mb-8 text-center text-gray-900 dark:text-white">Get in Touch</h2>
+            <form id="contact-form" class="max-w-lg mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md">
+                <div class="mb-4">
+                    <label for="name" class="block text-gray-700 dark:text-gray-300 mb-2">Name</label>
+                    <input type="text" id="name" name="name" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+                </div>
+                <div class="mb-4">
+                    <label for="email" class="block text-gray-700 dark:text-gray-300 mb-2">Email</label>
+                    <input type="email" id="email" name="email" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+                </div>
+                <div class="mb-4">
+                    <label for="message" class="block text-gray-700 dark:text-gray-300 mb-2">Message</label>
+                    <textarea id="message" name="message" rows="5" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"></textarea>
+                </div>
+                <button type="submit" class="btn-primary w-full">Send Message</button>
+            </form>
+        </section>
+    </main>
+
+    <!-- Chat Overlay -->
+    <div id="chat-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden transition-opacity duration-300">
+        <div id="chat-container" class="fixed inset-4 md:inset-8 bg-white dark:bg-gray-800 rounded-lg shadow-2xl flex flex-col transform transition-all duration-300 ease-in-out opacity-0 scale-95">
+            <!-- Chat Header -->
+            <div class="chat-header p-4 rounded-t-lg flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <img id="chat-personality-avatar" src="" alt="Avatar" class="w-8 h-8 rounded-full">
+                    <h2 id="chat-personality-name" class="text-xl font-semibold">Chatting with AI</h2>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button id="clear-chat" class="text-gray-300 hover:text-gray-100 focus:outline-none" aria-label="Clear chat history">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                    </button>
+                    <button id="toggle-dark-mode-chat" class="text-gray-300 hover:text-gray-100 focus:outline-none" aria-label="Toggle dark mode">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                        </svg>
+                    </button>
+                    <button id="close-chat" class="text-gray-300 hover:text-gray-100 focus:outline-none" aria-label="Close chat">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <!-- Chat Messages -->
+            <div id="chat-messages" class="flex-grow overflow-y-auto p-4 space-y-4"></div>
+            <!-- Typing Indicator -->
+            <div id="typing-indicator" class="px-4 py-2 hidden">
+                <div class="flex items-center space-x-2">
+                    <div class="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
+                    <div class="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                    <div class="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
+                </div>
+            </div>
+            <!-- Chat Input -->
+            <form id="chat-form" class="chat-input p-4 bg-gray-100 dark:bg-gray-700 rounded-b-lg">
+                <div class="flex items-center space-x-2">
+                    <input type="text" id="chat-input" placeholder="Type your message here..." required class="flex-grow px-4 py-2 rounded-full border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-600 dark:text-white transition-colors duration-300">
+                    <button type="submit" class="bg-primary-600 text-white px-4 py-2 rounded-full hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors duration-300">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                        </svg>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Personality Modal -->
+    <div id="personality-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden transition-opacity duration-300" role="dialog" aria-modal="true">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 relative overflow-y-auto max-h-full">
+            <button class="absolute top-4 right-4 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white focus:outline-none" id="close-modal" aria-label="Close profile">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+            <div id="modal-content">
+                <!-- Dynamic content will be injected here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- About Section -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Multi-Personality Chatbot</h3>
+                    <p>Experience diverse conversations with our unique AI personalities.</p>
+                </div>
+                <!-- Quick Links -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Quick Links</h3>
+                    <ul>
+                        <li><a href="#" class="hover:text-gray-300">Home</a></li>
+                        <li><a href="#features" class="hover:text-gray-300">Features</a></li>
+                        <li><a href="#personalities" class="hover:text-gray-300">Personalities</a></li>
+                        <li><a href="#testimonials" class="hover:text-gray-300">Testimonials</a></li>
+                        <li><a href="#contact" class="hover:text-gray-300">Contact</a></li>
+                    </ul>
+                </div>
+                <!-- Newsletter -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Newsletter</h3>
+                    <form id="newsletter-form" class="flex">
+                        <input type="email" id="newsletter-email" placeholder="Enter your email" required class="input-primary flex-grow px-4 py-2 rounded-l-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+                        <button type="submit" class="btn-primary rounded-r-lg">Subscribe</button>
+                    </form>
+                    <!-- Social Media Links -->
+                    <div class="mt-4 flex space-x-4">
+                        <a href="#" class="text-white hover:text-gray-300" aria-label="Facebook">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="text-white hover:text-gray-300" aria-label="Twitter">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="text-white hover:text-gray-300" aria-label="LinkedIn">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Footer Bottom -->
+            <div class="mt-8 text-center">
+                <p>&copy; 2024 Multi-Personality Chatbot. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Floating Action Button (FAB) -->
+    <button class="fab fixed bottom-6 right-6 bg-primary-600 text-white p-4 rounded-full shadow-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors duration-300" id="start-chat-fab" aria-label="Start a new chat">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+        </svg>
+    </button>
+
+    <!-- ChatApp JavaScript -->
+    <script type="module" src="{{ url_for('static', filename='js/ChatApp.js') }}"></script>
+
+    <!-- Additional Scripts -->
+    <script>
+        // Dark Mode Toggle Functionality
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        const darkModeIcon = document.getElementById('dark-mode-icon');
+        const lightModeIcon = document.getElementById('light-mode-icon');
+        const toggleDarkModeChat = document.getElementById('toggle-dark-mode-chat');
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark');
+            darkModeIcon.classList.toggle('hidden');
+            lightModeIcon.classList.toggle('hidden');
+            // Save preference to localStorage
+            if (document.body.classList.contains('dark')) {
+                localStorage.setItem('darkMode', 'enabled');
+            } else {
+                localStorage.setItem('darkMode', 'disabled');
+            }
+        }
+
+        darkModeToggle.addEventListener('click', toggleDarkMode);
+        toggleDarkModeChat.addEventListener('click', toggleDarkMode);
+
+        // Load Dark Mode Preference on Page Load
+        window.addEventListener('DOMContentLoaded', () => {
+            const darkMode = localStorage.getItem('darkMode');
+            if (darkMode === 'enabled') {
+                document.body.classList.add('dark');
+                darkModeIcon.classList.add('hidden');
+                lightModeIcon.classList.remove('hidden');
+            }
+        });
+
+        // Mobile Menu Toggle Functionality
+        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuToggle.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Testimonials Slider Functionality
+        const testimonialSlider = document.getElementById('testimonial-slider');
+        const testimonialPrev = document.getElementById('testimonial-prev');
+        const testimonialNext = document.getElementById('testimonial-next');
+        let testimonialIndex = 0;
+        const totalTestimonials = testimonialSlider.children.length;
+
+        function updateTestimonialSlider() {
+            testimonialSlider.style.transform = `translateX(-${testimonialIndex * 100}%)`;
+        }
+
+        testimonialPrev.addEventListener('click', () => {
+            testimonialIndex = (testimonialIndex === 0) ? totalTestimonials - 1 : testimonialIndex - 1;
+            updateTestimonialSlider();
+        });
+
+        testimonialNext.addEventListener('click', () => {
+            testimonialIndex = (testimonialIndex === totalTestimonials - 1) ? 0 : testimonialIndex + 1;
+            updateTestimonialSlider();
+        });
+
+        // Auto-slide Testimonials
+        setInterval(() => {
+            testimonialIndex = (testimonialIndex === totalTestimonials - 1) ? 0 : testimonialIndex + 1;
+            updateTestimonialSlider();
+        }, 5000);
+
+        // Personality Selection Functionality
+        const personalitiesGrid = document.getElementById('personalities-grid');
+        const chatOverlay = document.getElementById('chat-overlay');
+        const chatContainer = document.getElementById('chat-container');
+        const chatPersonalityName = document.getElementById('chat-personality-name');
+        const chatPersonalityAvatar = document.getElementById('chat-personality-avatar');
+        const closeChatButton = document.getElementById('close-chat');
+        const startChatFab = document.getElementById('start-chat-fab');
+
+        personalitiesGrid.addEventListener('click', (event) => {
+            const card = event.target.closest('.cursor-pointer');
+            if (card) {
+                const personalityId = card.getAttribute('data-personality-id');
+                const personalityName = card.querySelector('h3').textContent;
+                const personalityAvatar = card.querySelector('img').getAttribute('src');
+                openChat(personalityName, personalityAvatar);
+                // Optionally, load personality-specific data here
+            }
+        });
+
+        startChatFab.addEventListener('click', () => {
+            openChat('AI', '{{ url_for("static", filename="images/default-avatar.png") }}');
+        });
+
+        closeChatButton.addEventListener('click', closeChat);
+
+        function openChat(personalityName, personalityAvatar) {
+            chatPersonalityName.textContent = `Chatting with ${personalityName}`;
+            chatPersonalityAvatar.setAttribute('src', personalityAvatar);
+            chatOverlay.classList.remove('hidden');
+            chatContainer.classList.remove('opacity-0', 'scale-95');
+            document.body.classList.add('overflow-hidden');
+            // Optionally, apply personality-specific themes to chat
+            applyChatTheme(personalityName);
+        }
+
+        function closeChat() {
+            chatOverlay.classList.add('hidden');
+            chatContainer.classList.add('opacity-0', 'scale-95');
+            document.body.classList.remove('overflow-hidden');
+        }
+
+        // Close Chat by Clicking Outside the Chat Container
+        chatOverlay.addEventListener('click', (event) => {
+            if (event.target === chatOverlay) {
+                closeChat();
+            }
+        });
+
+        // Apply Chat Theme Based on Personality
+        function applyChatTheme(personalityName) {
+            // Define color themes for each personality
+            const themes = {
+                'Evelyn': {
+                    primary: 'bg-blue-500',
+                    secondary: 'bg-blue-100',
+                    text: 'text-blue-900',
+                    button: 'bg-blue-600 hover:bg-blue-700'
+                },
+                'Max': {
+                    primary: 'bg-green-500',
+                    secondary: 'bg-green-100',
+                    text: 'text-green-900',
+                    button: 'bg-green-600 hover:bg-green-700'
+                },
+                'Luna': {
+                    primary: 'bg-pink-500',
+                    secondary: 'bg-pink-100',
+                    text: 'text-pink-900',
+                    button: 'bg-pink-600 hover:bg-pink-700'
+                },
+                'Oscar': {
+                    primary: 'bg-yellow-500',
+                    secondary: 'bg-yellow-100',
+                    text: 'text-yellow-900',
+                    button: 'bg-yellow-600 hover:bg-yellow-700'
+                },
+                'AI': {
+                    primary: 'bg-indigo-500',
+                    secondary: 'bg-indigo-100',
+                    text: 'text-indigo-900',
+                    button: 'bg-indigo-600 hover:bg-indigo-700'
+                }
+                // Add more personalities as needed
+            };
+
+            // Reset previous themes
+            chatContainer.classList.remove('bg-blue-500', 'bg-green-500', 'bg-pink-500', 'bg-yellow-500', 'bg-indigo-500');
+            chatContainer.classList.add(themes[personalityName]?.primary || 'bg-white');
+
+            // Update chat header colors
+            const chatHeader = chatContainer.querySelector('.chat-header');
+            chatHeader.classList.remove('bg-blue-600', 'bg-green-600', 'bg-pink-600', 'bg-yellow-600', 'bg-indigo-600');
+            chatHeader.classList.add(themes[personalityName]?.primary || 'bg-primary-600');
+
+            // Update chat button styles
+            const chatButton = chatContainer.querySelector('#chat-form button');
+            chatButton.classList.remove('bg-blue-600', 'bg-green-600', 'bg-pink-600', 'bg-yellow-600', 'bg-indigo-600', 'hover:bg-blue-700', 'hover:bg-green-700', 'hover:bg-pink-700', 'hover:bg-yellow-700', 'hover:bg-indigo-700');
+            chatButton.classList.add(themes[personalityName]?.button || 'bg-primary-600 hover:bg-primary-700');
+        }
+
+        // Personality Modal Functionality
+        const personalityModal = document.getElementById('personality-modal');
+        const modalContent = document.getElementById('modal-content');
+        const closeModalButton = document.getElementById('close-modal');
+
+        const personalitiesDetails = {
+            '1': {
+                name: 'Evelyn',
+                description: 'A friendly and knowledgeable assistant ready to help you with anything.',
+                traits: ['Friendly', 'Knowledgeable', 'Supportive'],
+                interests: ['Technology', 'Education', 'Health'],
+                example: 'Evelyn can help you schedule appointments, answer questions about various topics, and provide support whenever you need it.',
+                avatar: '{{ url_for("static", filename="images/evelyn.png") }}',
+                color: 'blue'
+            },
+            '2': {
+                name: 'Max',
+                description: 'A tech-savvy and analytical thinker who loves solving complex problems.',
+                traits: ['Analytical', 'Tech-Savvy', 'Problem Solver'],
+                interests: ['Programming', 'Mathematics', 'Engineering'],
+                example: 'Max excels at debugging code, optimizing algorithms, and providing in-depth technical explanations.',
+                avatar: '{{ url_for("static", filename="images/max.png") }}',
+                color: 'green'
+            },
+            '3': {
+                name: 'Luna',
+                description: 'A creative and artistic companion who inspires and motivates.',
+                traits: ['Creative', 'Artistic', 'Motivational'],
+                interests: ['Art', 'Music', 'Writing'],
+                example: 'Luna can help you brainstorm creative ideas, provide artistic inspiration, and encourage your creative endeavors.',
+                avatar: '{{ url_for("static", filename="images/luna.png") }}',
+                color: 'pink'
+            },
+            '4': {
+                name: 'Oscar',
+                description: 'A humorous and witty conversationalist who keeps the chat lively.',
+                traits: ['Humorous', 'Witty', 'Energetic'],
+                interests: ['Comedy', 'Movies', 'Games'],
+                example: 'Oscar loves to share jokes, engage in light-hearted banter, and keep the conversation fun and entertaining.',
+                avatar: '{{ url_for("static", filename="images/oscar.png") }}',
+                color: 'yellow'
+            }
+            // Add more personalities as needed
+        };
+
+        personalitiesGrid.addEventListener('click', (event) => {
+            const card = event.target.closest('.cursor-pointer');
+            if (card) {
+                const personalityId = card.getAttribute('data-personality-id');
+                openPersonalityModal(personalityId);
+            }
+        });
+
+        function openPersonalityModal(id) {
+            const personality = personalitiesDetails[id];
+            if (personality) {
+                modalContent.innerHTML = `
+                    <div class="text-center">
+                        <img src="${personality.avatar}" alt="${personality.name}" class="w-24 h-24 rounded-full mx-auto mb-4 animate-float">
+                        <h3 class="text-2xl font-semibold mb-2">${personality.name}</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">${personality.description}</p>
+                        <h4 class="text-xl font-semibold mb-2">Traits</h4>
+                        <ul class="list-disc list-inside text-gray-600 dark:text-gray-300 mb-4">
+                            ${personality.traits.map(trait => `<li>${trait}</li>`).join('')}
+                        </ul>
+                        <h4 class="text-xl font-semibold mb-2">Interests</h4>
+                        <ul class="list-disc list-inside text-gray-600 dark:text-gray-300 mb-4">
+                            ${personality.interests.map(interest => `<li>${interest}</li>`).join('')}
+                        </ul>
+                        <h4 class="text-xl font-semibold mb-2">Example Conversation</h4>
+                        <p class="text-gray-600 dark:text-gray-300">${personality.example}</p>
+                    </div>
+                `;
+                personalityModal.classList.remove('hidden');
+            }
+        }
+
+        // Close Personality Modal
+        closeModalButton.addEventListener('click', () => {
+            personalityModal.classList.add('hidden');
+        });
+
+        // Close Modal by Clicking Outside
+        personalityModal.addEventListener('click', (event) => {
+            if (event.target === personalityModal) {
+                personalityModal.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

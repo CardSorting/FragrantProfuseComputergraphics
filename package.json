@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@tailwindcss/forms": "^0.5.9",
+    "@tailwindcss/typography": "^0.5.15",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.13"
+  },
+  "scripts": {
+    "build:css": "postcss static/css/styles.css -o static/css/output.css"
+  },
+  "devDependencies": {
+    "postcss-cli": "^11.0.0"
+  }
+}

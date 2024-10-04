@@ -1,0 +1,37 @@
+<header class="bg-white dark:bg-gray-800 rounded-t-2xl shadow-md p-4 backdrop-blur-lg bg-opacity-80 dark:bg-opacity-80 transition-all duration-300 {{ 'bg-' + personality.color + '-gradient-header dark:bg-' + personality.color + '-gradient-header-dark' }}">
+    <div class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-primary-600 dark:text-primary-400">Chat with {{ personality.name }}</h1>
+        <div class="flex items-center space-x-4">
+            <!-- Clear Chat Button -->
+            <button id="clear-chat" class="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 focus:outline-none transition-colors duration-300" aria-label="Clear chat history">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                </svg>
+            </button>
+            <!-- Toggle Theme Button -->
+            <button id="toggle-theme" class="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 focus:outline-none transition-colors duration-300" aria-label="Toggle theme">
+                <svg id="light-mode-icon" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/>
+                </svg>
+                <svg id="dark-mode-icon" class="w-6 h-6 hidden" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M17.293 13.293A8 8 0 116.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+                </svg>
+            </button>
+            <!-- Back to Home Button -->
+            <a href="/" class="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 focus:outline-none transition-colors duration-300" aria-label="Back to home">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+            </a>
+        </div>
+    </div>
+    <!-- Search Container -->
+    <div id="search-container" class="mt-4 relative overflow-hidden transition-all duration-300 max-h-0">
+        <input type="text" id="search-input" placeholder="Search messages..." class="w-full px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors duration-300">
+        <button id="search-button" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-primary-600 focus:outline-none transition-colors duration-300">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+        </button>
+    </div>
+</header>

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Chat with {{ personality.name }}{% endblock %}
+
+{% block content %}
+    <div id="chat-container" class="flex flex-col h-full max-w-4xl mx-auto relative">
+        <!-- Header Component -->
+        {% include "components/header.html" %}
+
+        <!-- Main Chat Area -->
+        {% include "components/chat_messages.html" %}
+
+        <!-- Typing Indicator is part of chat_messages.html -->
+
+        <!-- Footer with Chat Input Component -->
+        {% include "components/chat_input.html" %}
+    </div>
+
+    <!-- Emoji Panel Component -->
+    {% include "components/emoji_panel.html" %}
+
+    <!-- Theme Selector Component -->
+    {% include "components/theme_selector.html" %}
+
+    <!-- Engagement Points Component -->
+    {% include "components/engagement_points.html" %}
+{% endblock %}
+
+{% block scripts %}
+    <!-- Main JavaScript Module -->
+    <script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}

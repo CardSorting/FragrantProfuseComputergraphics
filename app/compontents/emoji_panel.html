@@ -1,0 +1,11 @@
+<!-- Emoji Panel -->
+<div id="emoji-panel" class="hidden absolute bottom-20 right-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 transition-all duration-300 transform scale-95 opacity-0">
+    <!-- Emoji grid will be dynamically inserted here -->
+    <div class="grid grid-cols-5 gap-2">
+        {% for emoji in emojis %}
+            <button type="button" class="emoji text-xl focus:outline-none" aria-label="Insert {{ emoji }}">
+                {{ emoji }}
+            </button>
+        {% endfor %}
+    </div>
+</div>

@@ -1,0 +1,202 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary-600 text-white px-4 py-2 rounded-full hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all duration-300;
+  }
+
+  .card {
+    @apply bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6 transition-all duration-300 hover:shadow-lg backdrop-blur-lg bg-opacity-80 dark:bg-opacity-80;
+  }
+
+  .input-primary {
+    @apply px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all duration-300 dark:bg-gray-700 dark:text-white;
+  }
+}
+
+/* Chat styles */
+.message {
+  @apply mb-4 p-3 rounded-2xl max-w-[80%] break-words transition-all duration-300 transform;
+  animation: messageFadeIn 0.3s ease-out forwards, messageExpand 0.3s ease-out forwards;
+}
+
+.user-message {
+  @apply bg-primary-600 text-white self-end ml-auto;
+}
+
+.bot-message {
+  @apply bg-gray-200 text-black self-start dark:bg-gray-700 dark:text-white;
+}
+
+@keyframes messageFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes messageExpand {
+  from { transform: scale(0.95); }
+  to { transform: scale(1); }
+}
+
+/* Floating chat box effect */
+#chat-container {
+  @apply transition-all duration-300 ease-in-out;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+#chat-container:hover {
+  box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.2), 0 20px 20px -10px rgba(0, 0, 0, 0.08);
+}
+
+/* Gradient dividers */
+.session-divider {
+  @apply h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-600 to-transparent my-4 opacity-50;
+}
+
+/* Typing indicator */
+@keyframes gradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+#typing-indicator {
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6, #3b82f6);
+  background-size: 200% 200%;
+  animation: gradientFlow 3s ease infinite;
+}
+
+/* Soft motion gradients */
+.bg-motion-gradient {
+  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+}
+
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Message animations */
+@keyframes messageSlideIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(20px);
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0);
+  }
+}
+
+.message-animate-in {
+  animation: messageSlideIn 0.3s ease-out forwards;
+}
+
+/* Micro-animations */
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.animate-micro-pulse {
+  animation: pulse 0.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Interactive hover effects */
+.message:hover .message-timestamp {
+  opacity: 1;
+}
+
+.message-timestamp {
+  @apply text-xs text-gray-500 mt-1 opacity-0 transition-opacity duration-300;
+}
+
+/* Theme transition */
+.theme-transition {
+  @apply transition-all duration-500;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 640px) {
+  .message {
+    @apply max-w-[90%];
+  }
+}
+
+/* Accessibility improvements */
+.sr-only {
+  @apply absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0;
+}
+
+/* Interactive background blur */
+.bg-blur-effect {
+  @apply backdrop-blur-sm transition-all duration-300;
+}
+
+.bg-blur-effect:hover {
+  @apply backdrop-blur-md;
+}
+
+/* Quick reply buttons */
+.quick-reply-btn {
+  @apply bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white px-3 py-1 rounded-full text-sm hover:bg-primary-100 dark:hover:bg-primary-900 transition-colors duration-300;
+}
+
+/* Engagement points animation */
+@keyframes pointsPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+#engagement-points.points-added {
+  animation: pointsPulse 0.5s ease-out;
+}
+
+/* Theme selector */
+.theme-option {
+  @apply w-8 h-8 rounded-full cursor-pointer border-2 border-transparent hover:border-primary-500 transition-all duration-300;
+}
+
+.theme-option.active {
+  @apply border-primary-500 scale-110;
+}
+
+/* Chat container for consistent message flow */
+#chat-messages {
+  @apply flex flex-col-reverse;
+  scroll-behavior: smooth;
+}
+
+/* Responsive bubble sizes */
+.message {
+  max-width: 70%;
+  transition: max-width 0.3s ease-in-out;
+}
+
+@media (min-width: 640px) {
+  .message {
+    max-width: 60%;
+  }
+}
+
+@media (min-width: 768px) {
+  .message {
+    max-width: 50%;
+  }
+}
+
+/* Typing indicator fade-out */
+#typing-indicator {
+  transition: opacity 0.3s ease-in-out;
+}

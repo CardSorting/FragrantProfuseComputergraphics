@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" class="w-full h-auto">
+  <style>
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    .float { animation: float 6s ease-in-out infinite; }
+    .pulse { animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+  </style>
+  <rect width="400" height="300" fill="#f0f9ff" />
+  <g class="float">
+    <circle cx="200" cy="150" r="80" fill="#3b82f6" />
+    <path d="M160 170 Q 200 120, 240 170" stroke="white" stroke-width="8" fill="none" />
+    <circle cx="180" cy="140" r="10" fill="white" />
+    <circle cx="220" cy="140" r="10" fill="white" />
+  </g>
+  <g class="pulse">
+    <circle cx="80" cy="60" r="20" fill="#34d399" />
+    <circle cx="320" cy="240" r="30" fill="#8b5cf6" />
+    <circle cx="350" cy="80" r="15" fill="#f59e0b" />
+    <circle cx="50" cy="200" r="25" fill="#ec4899" />
+  </g>
+</svg>
